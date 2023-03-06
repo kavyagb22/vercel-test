@@ -15,6 +15,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const dotenv_1 = __importDefault(require("dotenv"));
 const mongoose_1 = __importDefault(require("mongoose"));
+const helpers_1 = require("../src/common/helpers");
 dotenv_1.default.config();
 // connect to MongoDB
 const main = () => __awaiter(void 0, void 0, void 0, function* () {
@@ -36,15 +37,25 @@ const main = () => __awaiter(void 0, void 0, void 0, function* () {
         console.log(error);
     }
     const app = (0, express_1.default)();
-    const port = process.env.PORT || 8080;
+    // check if API is working
     app.get("/", (_req, res) => {
-        return res.send("Express Typescript on Vercel");
+        return res.send("Hey this is Crypto Gateway Backend running 🥳");
     });
-    app.get("/ping", (_req, res) => {
-        return res.send("pong 🏓");
+    // error handling middleware
+    app.use((error, req, res, next) => {
+        console.log("Error Handling Middleware called");
+        console.log("Path: ", req.path);
+        console.error("Error: ", error);
+        if (error.type == "time-out") {
+            res.status(408).send((0, helpers_1.createError)(error.message));
+        }
+        else {
+            res.status(500).send((0, helpers_1.createError)(error.message));
+        }
     });
+    const port = process.env.PORT || 2400;
     app.listen(port, () => {
-        return console.log(`Server is listening on ${port}`);
+        return console.log(`Crypto Gateway Backend now listening for requests on port ${port}`);
     });
 });
 main();

@@ -1,6 +1,8 @@
 import express, { Request, Response } from "express";
 import dotenv from "dotenv";
 import mongoose from "mongoose";
+import cookieParser from "cookie-parser";
+import { createError } from "../src/common/helpers";
 dotenv.config();
 
 // connect to MongoDB
@@ -25,18 +27,29 @@ const main = async () => {
   }
 
   const app = express();
-  const port = process.env.PORT || 8080;
-
+  // check if API is working
   app.get("/", (_req: Request, res: Response) => {
-    return res.send("Express Typescript on Vercel");
+    return res.send("Hey this is Crypto Gateway Backend running 🥳");
   });
 
-  app.get("/ping", (_req: Request, res: Response) => {
-    return res.send("pong 🏓");
+  // error handling middleware
+  app.use((error: any, req: any, res: any, next: any) => {
+    console.log("Error Handling Middleware called");
+    console.log("Path: ", req.path);
+    console.error("Error: ", error);
+
+    if (error.type == "time-out") {
+      res.status(408).send(createError(error.message));
+    } else {
+      res.status(500).send(createError(error.message));
+    }
   });
 
+  const port = process.env.PORT || 2400;
   app.listen(port, () => {
-    return console.log(`Server is listening on ${port}`);
+    return console.log(
+      `Crypto Gateway Backend now listening for requests on port ${port}`
+    );
   });
 };
 main();

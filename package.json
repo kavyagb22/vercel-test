@@ -27,6 +27,7 @@
     "mongoose": "^7.0.0"
   },
   "devDependencies": {
+    "@types/cookie-parser": "^1.4.3",
     "@types/express": "types/express",
     "@types/node": "^18.14.6",
     "nodemon": "^2.0.21",
